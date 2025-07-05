@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HELIX PORTAL</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Source+Serif+4:wght@600&display=swap" rel="stylesheet">
+  <style>
+    /* ----- YOUR CSS: UNTOUCHED ----- */
+    :root {
+      --primary: #203647;
+      --accent: #5a94e2;
+      --accent-light: #e7f1ff;
+      --bg1: #eef3f8;
+      --bg2: #f7fafc;
+      --card: #fff;
+      --border: #dde4ec;
+      --radius: 13px;
+      --shadow: 0 6px 32px 0 rgba(58,80,120,.08);
+      --shadow-sm: 0 2px 10px 0 rgba(40,50,70,.08);
+      --danger: #e55252;
+      --success: #48b87d;
+      --nav-h: 60px;
+      --font-serif: 'Source Serif 4', serif;
+      --font-sans: 'Roboto', Arial, sans-serif;
+    }
+    body { min-height: 100vh; background: linear-gradient(135deg, var(--bg1) 55%, var(--bg2) 100%); margin: 0; font-family: var(--font-sans); color: #253858; font-size: 17px; }
+    #app { min-height: 100vh; }
+    h1,h2,h3 { font-family: var(--font-serif); color: var(--primary); margin-top: 0; font-weight: 600; letter-spacing: 0.01em; }
+    h1 { font-size: 2.2em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.18em; }
+    a { color: var(--accent); text-decoration: none; transition: color 0.2s;}
+    a:hover { text-decoration: underline; color: #185bbc; }
+    label { font-size: 1em; color: #374151; margin-bottom: 5px; display: block;}
+    .centered-card { max-width: 430px; margin: 8vh auto 0 auto; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 2.4em 2em 2em 2em; display: flex; flex-direction: column; align-items: stretch; gap: 0.4em; animation: fadeIn .7s; }
+    .form-title { margin-bottom: 1.25em; }
+    .button { background: linear-gradient(90deg, var(--accent) 70%, #399fff 100%); color: #fff; border: none; border-radius: var(--radius); padding: 0.9em 1.6em; font-weight: bold; font-size: 1em; cursor: pointer; box-shadow: var(--shadow-sm); transition: background 0.2s, box-shadow 0.2s; margin-top: 0.1em; margin-bottom: 1.1em; }
+    .button:hover { background: #2051af; box-shadow:0 2px 24px #3079ed33;}
+    .button.alt { background: #f6f8fa; color: var(--primary); box-shadow: none; }
+    .button.danger { background: var(--danger);}
+    .button.small { font-size: 0.96em; padding: 0.6em 1.1em;}
+    input, textarea, select { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius); padding: 0.7em; margin-bottom: 1em; font-size: 1em; background: #fafdff; box-sizing: border-box; font-family: inherit; outline: none; transition: border-color 0.18s; }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent);}
+    .error { color: #b20000; margin-bottom: 1em; font-size: 1.01em;}
+    .success { color: var(--success); margin-bottom: 1em; font-size: 1.01em;}
+    .navbar { background: #fff; color: var(--primary); height: var(--nav-h); box-shadow: 0 2px 16px 0 #20344a12; padding: 0 2.2em; display: flex; justify-content: space-between; align-items: center; z-index: 100; position: sticky; top: 0; }
+    .navbar h1 { font-family: var(--font-serif); font-weight: 700; font-size: 1.45em; color: var(--primary); margin: 0; letter-spacing:0.01em; }
+    .navbar .nav-links { display: flex; align-items: center; gap: 2em; }
+    .navbar .nav-links a { color: var(--primary); font-weight: 500; font-size: 1.02em; padding: 6px 0; border-bottom: 2.5px solid transparent; transition: color 0.15s, border-color 0.2s; margin-left: 0.5em; }
+    .navbar .nav-links a.active, .navbar .nav-links a:focus { color: var(--accent); border-bottom: 2.5px solid var(--accent); }
+    .dashboard { max-width: 980px; margin: 2.5em auto 2em auto; padding: 2.4em 1.5em 2em 1.5em; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); animation: fadeIn .7s; }
+    .section { margin-bottom: 2.3em;}
+    .table-wrap { overflow-x:auto;}
+    table.timetable { border-collapse: collapse; width: 100%; background: #fafdff; border-radius: var(--radius); box-shadow: 0 1px 10px #3079ed11; margin-bottom:1.5em; }
+    table.timetable th, table.timetable td { border: 1px solid var(--border); padding: 0.7em 0.8em; text-align: left; font-size: 1em; }
+    table.timetable th { background: var(--accent-light); color: var(--primary); font-weight: 700; font-family: var(--font-sans); font-size: 1em; }
+    table.timetable td { background: #fff;}
+    .pdf-link { background: #e8f2ff; color: #2253a7; padding: 4px 10px 4px 7px; border-radius: 5px; font-size: 1em; margin-right: 10px; display: inline-block; margin-bottom: 8px; text-decoration: none; }
+    .pdf-link:hover { background: #d5e7ff; }
+    .pdf-filename { font-size: 0.97em; }
+    @media (max-width: 700px) {
+      .navbar { padding:0 0.7em; }
+      .dashboard { padding: 1.15em 0.45em 1.2em 0.45em;}
+      .centered-card { padding: 1.5em 0.7em 1.2em 0.7em;}
+      table.timetable th, table.timetable td { font-size:0.97em; padding:0.65em 0.32em;}
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { getStorage, ref as sref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBFcPsA42BXAnhEwqcOVXGZR1n9FUguyC8",
+      authDomain: "helix-portal-cfea1.firebaseapp.com",
+      projectId: "helix-portal-cfea1",
+      storageBucket: "helix-portal-cfea1.appspot.com",
+      messagingSenderId: "70102314873",
+      appId: "1:70102314873:web:c10acc40e8553b454709a8",
+      measurementId: "G-H99V3K50NS"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    getAnalytics(app);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    // State
+    let currentUser = null, currentRole = null, currentTab = "login";
+    function $(id) { return document.getElementById(id); }
+    function showErr(id, msg) { const el=$(id); if(el){el.textContent=msg;} }
+    function showMsg(id, msg) { const el=$(id); if(el){el.textContent=msg;} }
+    const ADMIN_CODE = "HELIX28";
+    const appDiv = $("app");
+
+    // Navbar
+    function renderNavbar() {
+      return `
+        <nav class="navbar">
+          <h1>Academic Portal</h1>
+          <div class="nav-links">
+            <a href="#" onclick="setTab('dashboard')" ${currentTab==='dashboard'?'class="active"':''}>Home</a>
+            ${currentRole==='admin'?`
+              <a href="#" onclick="setTab('admin-timetable')" ${currentTab==='admin-timetable'?'class="active"':''}>Admin: Timetable</a>
+              <a href="#" onclick="setTab('admin-materials')" ${currentTab==='admin-materials'?'class="active"':''}>Admin: Materials</a>
+              <a href="#" onclick="setTab('admin-users')" ${currentTab==='admin-users'?'class="active"':''}>Admin: Users</a>
+            `:''}
+            <a href="#" onclick="logout()">Logout</a>
+          </div>
+        </nav>
+      `;
+    }
+    window.setTab = function(tab) {
+      currentTab = tab;
+      renderPage();
+    };
+
+    // LOGIN
+    function renderLogin() {
+      appDiv.innerHTML = `
+        <div class="centered-card fade">
+          <h2 class="form-title">Login</h2>
+          <form id="loginForm" autocomplete="on">
+            <label>Email</label>
+            <input required type="email" name="email" autocomplete="username" />
+            <label>Password</label>
+            <input required type="password" name="password" autocomplete="current-password" />
+            <div id="loginErr" class="error"></div>
+            <button class="button" type="submit" id="loginBtn">Login</button>
+            <div style="margin-top:0.5em;text-align:center;font-size:0.98em;">
+              <a href="#" id="gotoRegister">Register</a>
+              <span style="color:#aaa">|</span>
+              <a href="#" id="gotoReset">Forgot password?</a>
+            </div>
+          </form>
+        </div>
+      `;
+      $("gotoRegister").onclick = e => { e.preventDefault(); setTab('register'); };
+      $("gotoReset").onclick = e => { e.preventDefault(); setTab('reset'); };
+      $("loginForm").onsubmit = async function(e) {
+        e.preventDefault();
+        showErr("loginErr", "");
+        const btn = $("loginBtn");
+        btn.disabled = true; btn.textContent = "Logging in...";
+        try {
+          await signInWithEmailAndPassword(auth, this.email.value, this.password.value);
+        } catch(err) {
+          showErr("loginErr", err.message.replace("Firebase: ", ""));
+        }
+        btn.disabled = false; btn.textContent = "Login";
+      };
+    }
+
+    // REGISTER
+    function renderRegister() {
+      appDiv.innerHTML = `
+        <div class="centered-card fade">
+          <h2 class="form-title">Create Account</h2>
+          <form id="regForm" autocomplete="on">
+            <label>Full Name</label>
+            <input required name="name" />
+            <label>Email</label>
+            <input required type="email" name="email" />
+            <label>Password</label>
+            <input required type="password" name="password" />
+            <label>Admin code <span style="color:#aaa;font-size:0.98em;">(only for admins)</span></label>
+            <input name="adminCode" />
+            <div id="regErr" class="error"></div>
+            <button class="button" type="submit" id="regBtn">Register</button>
+            <div style="margin-top:1em;text-align:center;font-size:0.98em;">
+              <a href="#" id="gotoLogin">Already have an account? Login</a>
+            </div>
+          </form>
+        </div>
+      `;
+      $("gotoLogin").onclick = e => { e.preventDefault(); setTab('login'); };
+      $("regForm").onsubmit = async function(e){
+        e.preventDefault();
+        showErr("regErr", "");
+        $("regBtn").disabled = true;
+        try {
+          let cred = await createUserWithEmailAndPassword(auth, this.email.value, this.password.value);
+          let role = this.adminCode.value.trim() === ADMIN_CODE ? "admin" : "student";
+          await setDoc(doc(db, "users", cred.user.uid), { name: this.name.value, email: this.email.value, role });
+        } catch(err) {
+          showErr("regErr", err.message.replace("Firebase: ", ""));
+        }
+        $("regBtn").disabled = false;
+      }
+    }
+
+    // PASSWORD RESET
+    function renderReset() {
+      appDiv.innerHTML = `
+        <div class="centered-card fade">
+          <h2 class="form-title">Forgot Password</h2>
+          <form id="resetForm">
+            <label>Email</label>
+            <input required type="email" name="email" />
+            <div id="resetMsg" class="success"></div>
+            <div id="resetErr" class="error"></div>
+            <button class="button" type="submit" id="resetBtn">Send Reset Email</button>
+            <div style="margin-top:1em;text-align:center;font-size:0.98em;">
+              <a href="#" id="gotoLogin2">Back to login</a>
+            </div>
+          </form>
+        </div>
+      `;
+      $("gotoLogin2").onclick = e => { e.preventDefault(); setTab('login'); };
+      $("resetForm").onsubmit = async function(e){
+        e.preventDefault();
+        showMsg("resetMsg", ""); showErr("resetErr", "");
+        $("resetBtn").disabled = true;
+        try {
+          await sendPasswordResetEmail(auth, this.email.value);
+          showMsg("resetMsg", "Password reset email sent!");
+        } catch(err) {
+          showErr("resetErr", err.message.replace("Firebase: ", ""));
+        }
+        $("resetBtn").disabled = false;
+      };
+    }
+    async function logout() { await signOut(auth); }
+
+    // DASHBOARD
+    function renderDashboard() {
+      appDiv.innerHTML = renderNavbar() + `
+        <div class="dashboard fade">
+          <h2>Welcome, ${currentUser.displayName||currentUser.email}!</h2>
+          <div id="dashboard-timetable"></div>
+          <div id="dashboard-materials"></div>
+        </div>
+      `;
+      renderTimetable("dashboard-timetable", false);
+      renderMaterials("dashboard-materials", false);
+    }
+
+    // TIMETABLE
+    async function renderTimetable(targetId, editable) {
+      const target = $(targetId);
+      let snap = await getDocs(collection(db, "timetable"));
+      let html = `<h3>Timetable</h3><table class="timetable"><thead><tr><th>Course</th><th>Day</th><th>Time</th><th>Venue</th>${editable?'<th>Actions</th>':''}</tr></thead><tbody>`;
+      snap.forEach(docu => {
+        let t = docu.data();
+        html += `<tr>
+          <td>${t.course}</td><td>${t.day}</td><td>${t.time}</td><td>${t.venue}</td>
+          ${editable ? `<td>
+            <button class="button small" onclick="editTimetable('${docu.id}')">Edit</button>
+            <button class="button small danger" onclick="deleteTimetable('${docu.id}')">Delete</button>
+          </td>`: ''}
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+      if (editable) html += `
+        <form id="addttf" style="margin-top:1em;">
+          <label>Course</label><input required name="course">
+          <label>Day</label><input required name="day">
+          <label>Time</label><input required name="time">
+          <label>Venue</label><input required name="venue">
+          <button type="submit">Add</button>
+          <span class="error" id="tt_err"></span>
+        </form>`;
+      target.innerHTML = html;
+      if (editable && $("addttf")) {
+        $("addttf").onsubmit = async function(e){
+          e.preventDefault();
+          let data = {course:this.course.value,day:this.day.value,time:this.time.value,venue:this.venue.value};
+          try {
+            await addDoc(collection(db, "timetable"), data);
+            this.reset();
+            renderTimetable(targetId, editable);
+          } catch(err) {
+            $("tt_err").textContent = err.message;
+          }
+        }
+      }
+    }
+    window.editTimetable = async function(id) {
+      const ttRef = doc(db, "timetable", id);
+      const ttdoc = await getDoc(ttRef);
+      let t = ttdoc.data();
+      $("dashboard-timetable").innerHTML = `
+        <h3>Edit Timetable Entry</h3>
+        <form id="edittf">
+          <label>Course</label><input required name="course" value="${t.course}">
+          <label>Day</label><input required name="day" value="${t.day}">
+          <label>Time</label><input required name="time" value="${t.time}">
+          <label>Venue</label><input required name="venue" value="${t.venue}">
+          <button type="submit">Save</button>
+          <button type="button" onclick="setTab('admin-timetable')">Cancel</button>
+          <span class="error" id="tt_err"></span>
+        </form>`;
+      $("edittf").onsubmit = async function(e){
+        e.preventDefault();
+        try {
+          await updateDoc(ttRef, {course:this.course.value,day:this.day.value,time:this.time.value,venue:this.venue.value});
+          setTab('admin-timetable');
+        } catch(err) {
+          $("tt_err").textContent = err.message;
+        }
+      }
+    };
+    window.deleteTimetable = async function(id) {
+      if (!confirm("Delete this row?")) return;
+      await deleteDoc(doc(db, "timetable", id));
+      renderTimetable("dashboard-timetable", true);
+    };
+
+    // MATERIALS
+    async function renderMaterials(targetId, editable) {
+      const target = $(targetId);
+      let snap = await getDocs(collection(db, "materials"));
+      let html = `<h3>Course Materials</h3>`;
+      snap.forEach(docu => {
+        let m = docu.data();
+        html += `<a class="pdf-link" href="${m.url}" target="_blank" download="${m.name}">&#128196; ${m.name}</a>`;
+        if (editable) html += `<button class="button small danger" onclick="deleteMaterial('${docu.id}','${m.storagePath}')">Delete</button>`;
+        html += `<br/>`;
+      });
+      if (editable) html += `
+        <form id="uploadf" style="margin-top:1em;">
+          <label>Upload PDF</label>
+          <input type="file" name="pdf" accept="application/pdf" required>
+          <button type="submit">Upload</button>
+          <span class="error" id="up_err"></span>
+        </form>`;
+      target.innerHTML = html;
+      if (editable && $("uploadf")) {
+        $("uploadf").onsubmit = async function(e){
+          e.preventDefault();
+          let file = this.pdf.files[0];
+          if (!file) return;
+          let sPath = `materials/${Date.now()}_${file.name}`;
+          try {
+            let snapshot = await uploadBytes(sref(storage, sPath), file);
+            let url = await getDownloadURL(snapshot.ref);
+            await addDoc(collection(db,"materials"), {name:file.name,url:url,storagePath:sPath});
+            this.reset();
+            renderMaterials(targetId, editable);
+          } catch(err) {
+            $("up_err").textContent = err.message;
+          }
+        }
+      }
+    }
+    window.deleteMaterial = async function(id, storagePath) {
+      if (!confirm("Delete this material and its file?")) return;
+      await deleteDoc(doc(db, "materials", id));
+      await deleteObject(sref(storage, storagePath));
+      renderMaterials("dashboard-materials", true);
+    };
+
+    // ADMIN USERS
+    async function renderUsers() {
+      appDiv.innerHTML = renderNavbar() + `<div class="dashboard fade">
+        <h2>Manage Users</h2>
+        <table class="timetable" id="usertable"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr></thead><tbody></tbody></table>
+        <span id="user_err" class="error"></span>
+      </div>`;
+      let snap = await getDocs(collection(db,"users"));
+      let html = '';
+      snap.forEach(docu => {
+        let u = docu.data();
+        html += `<tr>
+          <td>${u.name||''}</td>
+          <td>${u.email}</td>
+          <td>${u.role}</td>
+          <td>${docu.id===auth.currentUser.uid ? '<span style="color:#aaa;">(You)</span>' : `<button class="button small danger" onclick="deleteUser('${docu.id}')">Delete</button>`}</td>
+        </tr>`;
+      });
+      $("usertable").querySelector("tbody").innerHTML = html;
+    }
+    window.deleteUser = async function(uid) {
+      if (!confirm("Delete this user? This is permanent!")) return;
+      await deleteDoc(doc(db, "users", uid));
+      renderUsers();
+    };
+
+    // ROUTER
+    function renderPage() {
+      if (!currentUser) {
+        if (currentTab==='register') renderRegister();
+        else if (currentTab==='reset') renderReset();
+        else renderLogin();
+      } else {
+        if (currentTab==='dashboard') renderDashboard();
+        else if (currentTab==='admin-timetable' && currentRole==="admin") {
+          appDiv.innerHTML = renderNavbar() + `<div class="dashboard fade"><div id="dashboard-timetable"></div></div>`;
+          renderTimetable("dashboard-timetable", true);
+        }
+        else if (currentTab==='admin-materials' && currentRole==="admin") {
+          appDiv.innerHTML = renderNavbar() + `<div class="dashboard fade"><div id="dashboard-materials"></div></div>`;
+          renderMaterials("dashboard-materials", true);
+        }
+        else if (currentTab==='admin-users' && currentRole==="admin") {
+          renderUsers();
+        }
+        else renderDashboard();
+      }
+    }
+
+    // AUTH STATE
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      if (user) {
+        let uDoc = await getDoc(doc(db, "users", user.uid));
+        currentRole = uDoc.exists() ? uDoc.data().role : "student";
+        currentTab = 'dashboard';
+      } else {
+        currentRole = null;
+        currentTab = 'login';
+      }
+      renderPage();
+    });
+  </script>
+</body>
+</html>
