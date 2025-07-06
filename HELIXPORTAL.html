@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,7 +60,28 @@
     table.timetable td { background: #fff;}
     .pdf-link { background: #e8f2ff; color: #2253a7; padding: 4px 10px 4px 7px; border-radius: 5px; font-size: 1em; margin-right: 10px; display: inline-block; margin-bottom: 8px; text-decoration: none; }
     .pdf-link:hover { background: #d5e7ff; }
-    .pdf-filename { font-size: 0.97em; }
+    .button.small {
+  display: inline-block;
+  margin-left: 10px;
+  margin-top: 3px;
+}
+ body.dark {
+      --bg1: #1c1c1c;
+      --bg2: #2a2a2a;
+      --card: #2c2f33;
+      --border: #3a3d40;
+      --accent-light: #34495e;
+      --primary: #ecf0f1;
+      --danger: #ff6b6b;
+      --success: #27ae60;
+      background: linear-gradient(135deg, var(--bg1) 55%, var(--bg2) 100%);
+      color: var(--primary);
+    }
+    .navbar .nav-links a.toggle-dark {
+      font-weight: bold;
+      cursor: pointer;
+    }
+  .pdf-filename { font-size: 0.97em; }
     @media (max-width: 700px) {
       .navbar { padding:0 0.7em; }
       .dashboard { padding: 1.15em 0.45em 1.2em 0.45em;}
@@ -76,6 +98,7 @@
     import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
     import { getStorage, ref as sref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
+    import { updateProfile } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
     // Firebase config (keep this correct)
     const firebaseConfig = {
@@ -181,9 +204,13 @@
         btn.disabled = true;
         btn.textContent = "Logging in...";
         try {
-          await signInWithEmailAndPassword(auth, this.email.value, this.password.value);
-          // Do NOT immediately re-enable the button.
-          // Wait for onAuthStateChanged to fire, which will call renderPage().
+          let userCred = await signInWithEmailAndPassword(auth, this.email.value, this.password.value);
+          currentUser = userCred.user;
+          let uDoc = await getDoc(doc(db, "users", currentUser.uid));
+          currentRole = (uDoc.exists() && uDoc.data().role) ? uDoc.data().role : "student";
+          currentTab = "dashboard";
+renderPage();
+
         } catch(err) {
           showErr("loginErr", err.message.replace("Firebase: ", ""));
           btn.disabled = false;
@@ -223,8 +250,9 @@
         btn.textContent = "Registering...";
         try {
           let cred = await createUserWithEmailAndPassword(auth, this.email.value, this.password.value);
-          let role = this.adminCode.value.trim() === ADMIN_CODE ? "admin" : "student";
-          await setDoc(doc(db, "users", cred.user.uid), { name: this.name.value, email: this.email.value, role });
+        await cred.user.updateProfile({ displayName: this.name.value }); // ✅ Add this
+        let role = this.adminCode.value.trim() === ADMIN_CODE ? "admin" : "student";
+        await setDoc(doc(db, "users", cred.user.uid), { name: this.name.value, email: this.email.value, role });
           // Do NOT immediately re-enable the button.
           // Wait for onAuthStateChanged to fire and rerender.
         } catch(err) {
@@ -357,8 +385,8 @@
           <label>Day</label><input required name="day" value="${t.day}">
           <label>Time</label><input required name="time" value="${t.time}">
           <label>Venue</label><input required name="venue" value="${t.venue}">
-          <button type="submit">Save</button>
-          <button type="button" id="cancelEditBtn">Cancel</button>
+          <button class="button" type="submit">Save</button>
+          <button class="button alt" type="button" id="cancelEditBtn">Cancel</button>
           <span class="error" id="tt_err"></span>
         </form>`;
       $("cancelEditBtn").onclick = () => renderTimetable(targetId, editable);
@@ -394,7 +422,7 @@
         <form id="uploadf" style="margin-top:1em;">
           <label>Upload PDF</label>
           <input type="file" name="pdf" accept="application/pdf" required>
-          <button type="submit">Upload</button>
+          <button class="button" type="submit">Upload</button>
           <span class="error" id="up_err"></span>
         </form>`;
       target.innerHTML = html;
@@ -459,7 +487,7 @@
       await deleteDoc(doc(db, "users", uid));
       renderUsers();
     }
-
+ 
     // Auth state
     onAuthStateChanged(auth, async (user) => {
       currentUser = user;
